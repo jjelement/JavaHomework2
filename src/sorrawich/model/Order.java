@@ -1,5 +1,7 @@
 package sorrawich.model;
 
+import java.sql.Timestamp;
+
 public class Order {
     private String orderId;
     private String productName;
@@ -18,7 +20,6 @@ public class Order {
     }
 
     public Order(String productName, Double price, String status) {
-        this.orderId = String.format("%s", 6000000+orderCount++);
         this.productName = productName;
         this.price = price;
         this.status = status;

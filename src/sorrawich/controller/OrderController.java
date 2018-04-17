@@ -21,14 +21,13 @@ public class OrderController {
     public void createTable() throws SQLException {
         String sql = "CREATE TABLE orders (" +
                 "   orderId VARCHAR(6)," +
-                "   productName VARCHAR(50)," +
-                "   price DECIMAL(6,2)" +
-                "   status VARCHAR(7)" +
+                "   productName VARCHAR(64)," +
+                "   price DECIMAL(8,2)," +
+                "   status VARCHAR(7)," +
                 "   PRIMARY KEY(orderId)" +
                 ")";
 
-        Statement statement = this.connection.createStatement();
-        statement.executeUpdate(sql);
+        this.execute(sql);
         System.out.println("> Created table success");
     }
 
@@ -38,34 +37,43 @@ public class OrderController {
         statement.executeUpdate(sql);
         System.out.println("> Drop table success");
     }
+    
+    public void updateOrder(Order order) throws SQLException {
+        String sql = String.format("UPDATE orders SET productName='%s', price='%.2f', status='%s' WHERE orderId='%s'",
+                order.getProductName(),
+                order.getPrice(),
+                order.getStatus(),
+                order.getOrderId()
+        );
+        
+        int result = (int)this.execute(sql);
+        System.out.println("> Update success");
+    }
 
     public void insertOrder(Order order) throws SQLException {
-        String sql = String.format("INSERT INTO orders(orderId, productName, price, status) VALUES ('%s', '%s', '%.2f', '%s')",
-                order.getOrderId(),
+        Statement statement = this.connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM orders");
+        resultSet.next();
+        Integer orderCount = resultSet.getInt(1);
+        String orderId = String.format("%s", 100000+orderCount);
+        String sql = String.format("INSERT INTO orders(orderId, productName, price, status) VALUES ('%s', '%s', %.2f, '%s')",
+                orderId,
                 order.getProductName(),
                 order.getPrice(),
                 order.getStatus()
         );
-
-//        Statement statement = this.connection.createStatement();
-//        int result = statement.executeUpdate(sql);
+        
         this.execute(sql);
         System.out.println("> Insert success");
     }
     
+    public void deleteOrder(Order order) throws SQLException {
+        String sql = "DELETE orders WHERE orderId='" + order.getOrderId() + "'";
+        this.execute(sql);
+        System.out.println("> Delete success");
+    }
+    
     public ArrayList<Order> findByOrderId(String orderId) throws SQLException {
-//        ArrayList<Order> orders = new ArrayList<>();
-//        Statement statement = this.connection.createStatement();
-//        ResultSet resultSet = statement.executeQuery("SELECT * FROM orders WHERE orderId = '" + orderId + "'");
-//        while(resultSet.next()) {
-//            Order order = new Order(
-//                    resultSet.getString(1),
-//                    resultSet.getString(2),
-//                    resultSet.getDouble(3),
-//                    resultSet.getString(4)
-//            );
-//            orders.add(order);
-//        }
         return (ArrayList<Order>)this.execute("SELECT * FROM orders WHERE orderId = '" + orderId + "'");
     }
 
