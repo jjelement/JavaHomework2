@@ -5,19 +5,20 @@ public class Order {
     private String productName;
     private Double price;
     private String status;
+    private static Integer orderCount = 0;
 
     public Order() {
     }
 
-    public Order(String orderId, String productName, Double price) {
+    public Order(String orderId, String productName, Double price, String status) {
         this.orderId = orderId;
         this.productName = productName;
         this.price = price;
-        this.status = "waiting";
+        this.status = status;
     }
 
-    public Order(String orderId, String productName, Double price, String status) {
-        this.orderId = orderId;
+    public Order(String productName, Double price, String status) {
+        this.orderId = String.format("%s", 6000000+orderCount++);
         this.productName = productName;
         this.price = price;
         this.status = status;
